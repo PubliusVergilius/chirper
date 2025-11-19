@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Chirp;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use League\Config\Exception\ValidationException;
 
 class ChirpController extends Controller
 {
@@ -20,6 +22,7 @@ class ChirpController extends Controller
         return view("home", ['chirps' => $chirps]);
     }
 
+
     /**
      * Show the form for creating a new resource.
      */
@@ -33,7 +36,32 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate(
+            [
+                'message' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    /* Make each chirp unique
+                    Rule::unique('chirps')->where(function ($query) use ($user) {
+                        return $query->where('user_id', $user->id);
+                    })
+                    */
+                ]
+            ],
+            [
+                'message.required' => 'Please write something to chirp!',
+
+                'message.max' => 'Chirps must be 255 characters or less.'
+            ]
+        );
+
+        \App\Models\Chirp::create([
+            'message' => $validated['message'],
+            'user_id' => null
+        ]);
+
+        return redirect('/')->with('success', 'Chirp created!');
     }
 
     /**
