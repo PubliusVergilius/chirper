@@ -22,10 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*
         if (App::environment('local')) {
             DB::listen(function ($query) {
                 logger(SupportStr::replaceArray('?', $query->bindings, $query->sql));
             });
         }
+        */
     }
 }

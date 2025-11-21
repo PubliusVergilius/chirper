@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Chirp;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ChirpController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
         $chirps = Chirp::with('user')
             ->latest()
@@ -20,14 +21,6 @@ class ChirpController extends Controller
         return view("home", ['chirps' => $chirps]);
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -53,11 +46,14 @@ class ChirpController extends Controller
                 'message.max' => 'Chirps must be 255 characters or less.'
             ]
         );
-
+        /*
         \App\Models\Chirp::create([
             'message' => $validated['message'],
             'user_id' => null
         ]);
+        */
+
+        auth()->user()->chirps()->create($validated);
 
         return redirect('/')->with('success', 'Chirp created!');
     }
@@ -73,7 +69,7 @@ class ChirpController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Chirp $chirp)
+    public function edit(Chirp $chirp): View
     {
         return view('chirps.edit', compact('chirp'));
     }
@@ -107,6 +103,8 @@ class ChirpController extends Controller
      */
     public function destroy(Chirp $chirp)
     {
+        $this->authorize('update', $chirp);
+
         $chirp->delete();
 
         return redirect('/')->with('success', 'Chirp deleted!');
