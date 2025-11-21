@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Chirp;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use League\Config\Exception\ValidationException;
 
 class ChirpController extends Controller
 {
@@ -75,24 +73,42 @@ class ChirpController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Chirp $chirp)
     {
-        //
+        return view('chirps.edit', compact('chirp'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Chirp $chirp)
     {
-        //
+        /* Shorter version of the below
+         * $this->authorize('update', $chirp);
+         */
+
+        if ($request->user()->cannot('update', $chirp)) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'message' => [
+                'max:255'
+            ]
+        ]);
+
+        $chirp->update($validated);
+
+        return redirect('/')->with('success', 'Chirp edited!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Chirp $chirp)
     {
-        //
+        $chirp->delete();
+
+        return redirect('/')->with('success', 'Chirp deleted!');
     }
 }
