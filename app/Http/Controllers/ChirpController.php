@@ -109,4 +109,15 @@ class ChirpController extends Controller
 
         return redirect('/')->with('success', 'Chirp deleted!');
     }
+
+    public function show_profile(Chirp $chirp): View
+    {
+
+        $chirps = auth()->user()->chirps()
+            ->latest()
+            ->take(50)
+            ->get();
+
+        return view("profile", ['chirps' => $chirps]);
+    }
 }

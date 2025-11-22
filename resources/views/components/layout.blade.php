@@ -19,7 +19,9 @@
         </div>
         <div class="navbar-end gap-2">
             @auth
-                <span class="text-sm">{{ auth()->user()->name }}</span>
+                @unless (Request::is('profile'))
+                    <a href="/profile" class="btn btn-ghost btn-sm">{{ auth()->user()->name }}</a>
+                @endunless
                 <form method="POST" action="/logout" class="inline">
                     @csrf
                     <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
