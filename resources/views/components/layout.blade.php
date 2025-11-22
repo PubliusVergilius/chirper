@@ -17,6 +17,7 @@
         <div class="navbar-start">
             <a href="/" class="btn btn-ghost text-xl">🐦 Chirper</a>
         </div>
+        <x-search />
         <div class="navbar-end gap-2">
             @auth
                 @unless (Request::is('profile'))

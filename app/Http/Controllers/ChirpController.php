@@ -110,14 +110,24 @@ class ChirpController extends Controller
         return redirect('/')->with('success', 'Chirp deleted!');
     }
 
-    public function show_profile(Chirp $chirp): View
+    public function search(Request $request): View
     {
+        $validated = $request->validate([
+            'search' => [
+                'required',
+                'max:255'
+            ]
+        ]);
 
-        $chirps = auth()->user()->chirps()
+        $search = $validated['search'];
+
+        $chirps = Chirp::with('user')
             ->latest()
+            ->where('message', 'like', $search . "%")
             ->take(50)
             ->get();
 
-        return view("profile", ['chirps' => $chirps]);
+
+        return view("home", ['chirps' => $chirps]);
     }
 }

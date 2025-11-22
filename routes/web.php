@@ -25,4 +25,5 @@ Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')
         ->name('login');
     Route::post('/login', Login::class);
+    Route::post('/search', [ChirpController::class, 'search']);
 });
